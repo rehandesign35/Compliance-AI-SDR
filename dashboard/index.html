@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Compliance AI SDR</title>
+    <style>
+      :root {
+        --bg: #07111d;
+        --bg-2: #0d1a2b;
+        --panel: rgba(14, 22, 35, 0.9);
+        --panel-2: rgba(11, 17, 28, 0.98);
+        --text: #edf4ff;
+        --muted: #9abbae;
+        --muted-2: #7e90a7;
+        --line: rgba(156, 176, 198, 0.16);
+        --blue: #78b4ff;
+        --blue-2: #96d3ff;
+        --green: #76e0b1;
+        --green-2: #96f4c5;
+        --red: #ff7e7e;
+        --shadow: 0 32px 80px rgba(0, 0, 0, 0.45);
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Inter, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at 10% 5%, rgba(120, 180, 255, 0.22), transparent 20%),
+          radial-gradient(circle at 90% 10%, rgba(118, 224, 177, 0.12), transparent 24%),
+          linear-gradient(180deg, var(--bg) 0%, #0a1421 40%, #07111d 100%);
+        color: var(--text);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+        background-size: 42px 42px;
+        mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        pointer-events: none;
+      }
+
+      .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 28px 22px 80px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 10px 0 26px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(237, 244, 255, 0.9);
+      }
+
+      .brand-mark {
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        position: relative;
+        background: linear-gradient(135deg, var(--blue), var(--blue-2));
+        box-shadow: 0 16px 28px rgba(120, 180, 255, 0.32);
+      }
+
+      .brand-mark::before {
+        content: "";
+        position: absolute;
+        inset: 8px;
+        border: 2px solid rgba(7, 17, 29, 0.7);
+        border-radius: 7px;
+      }
+
+      .status-pill {
+        border: 1px solid rgba(118, 224, 177, 0.3);
+        background: rgba(118, 224, 177, 0.08);
+        color: var(--green-2);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.4fr 0.85fr;
+        gap: 22px;
+        margin-bottom: 24px;
+      }
+
+      .hero-copy,
+      .hero-panel,
+      .panel,
+      .stat-card {
+        background: linear-gradient(180deg, rgba(16, 25, 39, 0.95), rgba(9, 16, 26, 0.9));
+        border: 1px solid var(--line);
+        border-radius: 26px;
+        box-shadow: var(--shadow);
+      }
+
+      .hero-copy {
+        padding: 30px 30px 24px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid rgba(120, 180, 255, 0.24);
+        background: rgba(120, 180, 255, 0.08);
+        color: var(--blue-2);
+        border-radius: 999px;
+        padding: 7px 11px;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      .hero-copy h1 {
+        margin: 18px 0 14px;
+        font-size: clamp(2.7rem, 5vw, 4.6rem);
+        line-height: 0.98;
+        letter-spacing: -0.07em;
+      }
+
+      .hero-copy p {
+        margin: 0 0 20px;
+        max-width: 650px;
+        color: var(--muted);
+        font-size: 1.02rem;
+        line-height: 1.75;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .primary-btn,
+      .secondary-btn,
+      button {
+        border: none;
+        cursor: pointer;
+        border-radius: 14px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        transition: transform 180ms ease, box-shadow 180ms ease;
+      }
+
+      .primary-btn,
+      button {
+        background: linear-gradient(135deg, var(--blue), #9ac7ff);
+        color: #07111d;
+        box-shadow: 0 18px 28px rgba(120, 180, 255, 0.3);
+      }
+
+      .primary-btn {
+        padding: 14px 18px;
+      }
+
+      .secondary-btn {
+        background: transparent;
+        border: 1px solid var(--line);
+        color: var(--text);
+        padding: 14px 18px;
+      }
+
+      .primary-btn:hover,
+      .secondary-btn:hover,
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      .hero-panel {
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .mini-label {
+        color: var(--muted-2);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+
+      .score-wrap {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: end;
+        gap: 18px;
+      }
+
+      .big-score {
+        font-size: clamp(2.9rem, 5vw, 4.2rem);
+        font-weight: 800;
+        letter-spacing: -0.08em;
+        line-height: 0.95;
+      }
+
+      .big-score small {
+        font-size: 16px;
+        color: var(--muted);
+      }
+
+      .score-ring {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: conic-gradient(var(--green) 0 96%, rgba(255,255,255,0.08) 96% 100%);
+        position: relative;
+      }
+
+      .score-ring::before {
+        content: "96%";
+        width: 62px;
+        height: 62px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--panel-2);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .signal-list {
+        list-style: none;
+        margin: 22px 0 0;
+        padding: 0;
+        display: grid;
+        gap: 12px;
+      }
+
+      .signal-list li {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+      }
+
+      .signal-list strong {
+        color: var(--text);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(150px, 1fr));
+        gap: 18px;
+        margin-bottom: 24px;
+      }
+
+      .stat-card {
+        padding: 18px 18px 14px;
+      }
+
+      .stat-card .label {
+        color: var(--muted-2);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 11px;
+      }
+
+      .stat-card .value {
+        margin-top: 16px;
+        font-size: clamp(2rem, 3vw, 2.5rem);
+        font-weight: 800;
+        letter-spacing: -0.06em;
+      }
+
+      .stat-card .trend {
+        margin-top: 10px;
+        color: var(--green-2);
+        font-size: 12px;
+      }
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 0.9fr;
+        gap: 22px;
+      }
+
+      .panel {
+        padding: 20px 20px 18px;
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .panel-header h2 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+
+      .tiny-tag {
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 7px 10px;
+        color: var(--muted-2);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead th {
+        text-align: left;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted-2);
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      tbody td {
+        vertical-align: top;
+        padding: 14px 8px;
+        border-bottom: 1px solid rgba(156, 176, 198, 0.08);
+        color: var(--text);
+        font-size: 14px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      .badge.allowed {
+        background: rgba(118, 224, 177, 0.1);
+        color: var(--green-2);
+      }
+
+      .badge.blocked {
+        background: rgba(255, 126, 126, 0.1);
+        color: var(--red);
+      }
+
+      .side-stack {
+        display: grid;
+        gap: 22px;
+      }
+
+      .metric-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 0;
+        border-bottom: 1px solid rgba(156, 176, 198, 0.08);
+      }
+
+      .metric-row:last-child { border-bottom: none; }
+
+      .metric-row span {
+        color: var(--muted);
+      }
+
+      .metric-row strong {
+        font-size: 1.2rem;
+      }
+
+      form {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      input {
+        width: 100%;
+        background: rgba(255,255,255,0.01);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        color: var(--text);
+        padding: 15px 16px;
+        font-size: 15px;
+        outline: none;
+      }
+
+      input:focus {
+        border-color: rgba(120, 180, 255, 0.75);
+        box-shadow: 0 0 0 3px rgba(120, 180, 255, 0.12);
+      }
+
+      button {
+        padding: 15px 18px;
+        min-width: 160px;
+        font-size: 15px;
+      }
+
+      .result-box {
+        margin-top: 18px;
+        padding: 14px 16px;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--line);
+        color: var(--text);
+      }
+
+      .result-box.success {
+        background: rgba(118, 224, 177, 0.08);
+        border-color: rgba(118, 224, 177, 0.25);
+      }
+
+      .result-box.error {
+        background: rgba(255, 126, 126, 0.08);
+        border-color: rgba(255, 126, 126, 0.25);
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      @media (max-width: 980px) {
+        .hero, .content-grid { grid-template-columns: 1fr; }
+        .stats-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
+      }
+
+      @media (max-width: 620px) {
+        .topbar { flex-direction: column; align-items: flex-start; }
+        .stats-grid { grid-template-columns: 1fr; }
+        form { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="topbar">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <span>Compliance AI SDR</span>
+        </div>
+        <div class="status-pill">System healthy</div>
+      </div>
+
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">Trust layer</div>
+          <h1>Outbound built to feel safe, precise, and human.</h1>
+          <p>
+            The first experience is the signal. This dashboard proves every outreach decision is governed
+            by suppression, contact-window rules, and opt-out enforcement before a single message is sent.
+          </p>
+          <div class="hero-actions">
+            <button class="primary-btn" type="button">Review live decisions</button>
+            <button class="secondary-btn" type="button">Inspect guardrails</button>
+          </div>
+        </div>
+
+        <div class="hero-panel">
+          <div class="mini-label">Operating status</div>
+          <div class="score-wrap">
+            <div>
+              <div class="big-score">96<small>%</small></div>
+            </div>
+            <div class="score-ring" aria-label="96 percent compliant"></div>
+          </div>
+
+          <ul class="signal-list">
+            <li><span>Suppression coverage</span><strong>Live</strong></li>
+            <li><span>Contact checks</span><strong>Active</strong></li>
+            <li><span>Opt-out enforcement</span><strong>Verified</strong></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="stats-grid" id="statsGrid"></section>
+
+      <div class="content-grid">
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Compliance decisions</h2>
+            <div class="tiny-tag">Last 50</div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Lead name</th>
+                <th>Channel</th>
+                <th>Status</th>
+                <th>Reason</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="auditTableBody"></tbody>
+          </table>
+        </section>
+
+        <div class="side-stack">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Suppression list</h2>
+              <div class="tiny-tag">Live</div>
+            </div>
+            <div class="metric-row"><span>Total entries</span><strong id="suppressionTotal">--</strong></div>
+            <div class="metric-row"><span>Added last 7 days</span><strong id="suppressionRecent">--</strong></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Opt-out analytics</h2>
+              <div class="tiny-tag">Fast</div>
+            </div>
+            <div class="metric-row"><span>Total opt-outs</span><strong id="optOutTotal">--</strong></div>
+            <div class="metric-row"><span>Avg processing</span><strong><span id="optOutAverage">--</span> ms</strong></div>
+          </section>
+        </div>
+      </div>
+
+      <section class="panel" style="margin-top: 22px;">
+        <div class="panel-header">
+          <h2>Self-service opt-out</h2>
+          <div class="tiny-tag">Visitor flow</div>
+        </div>
+        <form id="optOutForm">
+          <input id="contactInput" type="text" placeholder="Enter your email or phone number" required />
+          <button type="submit">Opt me out</button>
+        </form>
+        <div id="optOutResult" class="result-box" style="display: none;"></div>
+      </section>
+
+      <section class="panel" style="margin-top: 22px;">
+        <div class="panel-header">
+          <h2>Deliverability</h2>
+          <div class="tiny-tag">Manual snapshot</div>
+        </div>
+        <p id="deliverabilityNote" class="muted">Loading deliverability status...</p>
+      </section>
+    </div>
+
+    <script>
+      const statsGrid = document.getElementById('statsGrid');
+      const auditTableBody = document.getElementById('auditTableBody');
+      const suppressionTotal = document.getElementById('suppressionTotal');
+      const suppressionRecent = document.getElementById('suppressionRecent');
+      const optOutTotal = document.getElementById('optOutTotal');
+      const optOutAverage = document.getElementById('optOutAverage');
+      const optOutResult = document.getElementById('optOutResult');
+      const deliverabilityNote = document.getElementById('deliverabilityNote');
+
+      function createStatCard(label, value, trend) {
+        const card = document.createElement('div');
+        card.className = 'stat-card';
+        card.innerHTML = `
+          <div class="label">${label}</div>
+          <div class="value">${value}</div>
+          <div class="trend">${trend || '&nbsp;'}</div>
+        `;
+        return card;
+      }
+
+      function renderAuditRows(rows) {
+        auditTableBody.innerHTML = '';
+
+        if (!rows || !rows.length) {
+          auditTableBody.innerHTML = '<tr><td colspan="5" class="muted">No audit entries found.</td></tr>';
+          return;
+        }
+
+        for (const row of rows) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${row.lead_name || '—'}</td>
+            <td>${row.channel || '—'}</td>
+            <td><span class="badge ${row.allowed ? 'allowed' : 'blocked'}">${row.allowed ? 'Allowed' : 'Blocked'}</span></td>
+            <td>${row.reason || '—'}</td>
+            <td>${row.checked_at ? new Date(row.checked_at).toLocaleString() : '—'}</td>
+          `;
+          auditTableBody.appendChild(tr);
+        }
+      }
+
+      async function loadDashboardData() {
+        const response = await fetch('/api/dashboard-data');
+        const data = await response.json();
+
+        if (!data.ok) {
+          throw new Error(data.error || 'Failed to load dashboard data');
+        }
+
+        statsGrid.innerHTML = '';
+        statsGrid.appendChild(createStatCard('Audit entries', String((data.auditEntries || []).length), 'Fresh compliance log'));
+        statsGrid.appendChild(createStatCard('Suppression', String(data.suppressionStats?.totalEntries ?? 0), 'Protected leads'));
+        statsGrid.appendChild(createStatCard('Opt-outs', String(data.optOutStats?.totalOptOuts ?? 0), 'Self-service requests'));
+        statsGrid.appendChild(createStatCard('Accuracy', `${data.complianceAccuracy ?? 0}%`, 'Eval aligned'));
+
+        suppressionTotal.textContent = String(data.suppressionStats?.totalEntries ?? 0);
+        suppressionRecent.textContent = String(data.suppressionStats?.recentAdditionsLast7Days ?? 0);
+        optOutTotal.textContent = String(data.optOutStats?.totalOptOuts ?? 0);
+        optOutAverage.textContent = String(data.optOutStats?.averageProcessingTimeMs ?? 0);
+        deliverabilityNote.textContent = data.deliverability?.note || 'Deliverability data not available.';
+
+        renderAuditRows(data.auditEntries || []);
+      }
+
+      document.getElementById('optOutForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const value = document.getElementById('contactInput').value.trim();
+
+        if (!value) {
+          return;
+        }
+
+        optOutResult.style.display = 'block';
+        optOutResult.className = 'result-box';
+        optOutResult.textContent = 'Processing opt-out...';
+
+        try {
+          const response = await fetch('/api/optOut', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: value.includes('@') ? value : undefined,
+              phone: value.includes('@') ? undefined : value
+            })
+          });
+
+          const result = await response.json();
+
+          if (!response.ok || !result.success) {
+            throw new Error(result.error || 'Opt-out request failed.');
+          }
+
+          const checkResponse = await fetch('/api/dashboard-data');
+          const dashboardData = await checkResponse.json();
+          const suppressionValues = (dashboardData.suppressionStats?.values || []).map((item) => String(item).toLowerCase());
+          const comparisonValue = value.trim().toLowerCase();
+          const normalized = comparisonValue.includes('@') ? comparisonValue : comparisonValue.replace(/\D+/g, '');
+          const blocked = suppressionValues.includes(normalized);
+
+          optOutResult.className = 'result-box success';
+          optOutResult.innerHTML = `
+            <strong>Opt-out processed successfully.</strong><br />
+            Message: ${result.message}<br />
+            Processed at: ${new Date(result.processedAt).toLocaleString()}<br />
+            Processing time: ${result.processingTimeMs} ms<br />
+            Re-check: ${blocked ? 'Blocked — contact is now on the suppression list.' : 'Not yet visible in the live suppression list.'}
+          `;
+        } catch (error) {
+          optOutResult.className = 'result-box error';
+          optOutResult.textContent = error.message || 'Unexpected opt-out error';
+        }
+      });
+
+      loadDashboardData().catch((error) => {
+        console.error(error);
+        auditTableBody.innerHTML = '<tr><td colspan="5" class="muted">Unable to load dashboard data.</td></tr>';
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "lead-suppressed",
+    "name": "Ava Suppressed",
+    "email": "suppress@example.com",
+    "phone": "+1 (415) 555-0101",
+    "timezone": "America/Los_Angeles",
+    "channel": "sms",
+    "expectedOutcome": "BLOCKED",
+    "expectedReason": "Email exactly matches suppression list entry."
+  },
+  {
+    "id": "lead-outside-window",
+    "name": "Ben Offhours",
+    "email": "ben.offhours@example.com",
+    "phone": "+1 (212) 555-0144",
+    "timezone": "Pacific/Kiritimati",
+    "channel": "sms",
+    "expectedOutcome": "BLOCKED",
+    "expectedReason": "Timezone is far ahead of UTC; when tested with a UTC now value in early morning Kiritimati local time, this will be outside 8AM-9PM local."
+  },
+  {
+    "id": "lead-over-frequency",
+    "name": "Cara Frequent",
+    "email": "cara.frequent@example.com",
+    "phone": "+1 (206) 555-0199",
+    "timezone": "America/Los_Angeles",
+    "channel": "voice",
+    "expectedOutcome": "BLOCKED",
+    "expectedReason": "This lead has multiple recent contact-history entries and should exceed the frequency cap."
+  },
+  {
+    "id": "lead-clean-valid",
+    "name": "Dylan Clean",
+    "email": "dylan.clean@example.com",
+    "phone": "+1 (303) 555-0177",
+    "timezone": "America/Denver",
+    "channel": "email",
+    "expectedOutcome": "ALLOWED",
+    "expectedReason": "Not suppressed, no recent history, and email has no time restriction."
+  },
+  {
+    "id": "lead-clean-valid-sms",
+    "name": "Emma Valid SMS",
+    "email": "emma.valid@example.com",
+    "phone": "+1 (512) 555-0112",
+    "timezone": "America/Chicago",
+    "channel": "sms",
+    "expectedOutcome": "ALLOWED",
+    "expectedReason": "SMS in a timezone where current local time is likely inside 8AM-9PM, and not suppressed."
+  },
+  {
+    "id": "lead-edge-suppressed-phone",
+    "name": "Frank Edge",
+    "email": "frank.edge@example.com",
+    "phone": "+1-415-555-0101",
+    "timezone": "America/Los_Angeles",
+    "channel": "voice",
+    "expectedOutcome": "BLOCKED",
+    "expectedReason": "Phone matches suppression entry after normalization, despite different formatting (plus sign, dashes, and spaces)."
+  }
+]

@@ -1,0 +1,8 @@
+[
+  { "contactId": "lead-over-frequency", "timestamp": "2026-08-30T09:15:00Z" },
+  { "contactId": "lead-over-frequency", "timestamp": "2026-08-31T11:45:00Z" },
+  { "contactId": "lead-over-frequency", "timestamp": "2026-09-01T08:30:00Z" },
+  { "contactId": "lead-over-frequency", "timestamp": "2026-09-01T10:00:00Z" },
+  { "contactId": "lead-suppressed", "timestamp": "2026-07-15T12:00:00Z" },
+  { "contactId": "lead-clean-valid", "timestamp": "2026-02-01T10:00:00Z" }
+]

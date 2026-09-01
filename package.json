@@ -1,0 +1,12 @@
+{
+  "name": "project-6-compliance-sdr",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "ts-node test/manual-test.ts"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}
