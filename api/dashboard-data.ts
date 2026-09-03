@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 type AuditRow = {
   lead_name?: string;
   channel?: string;

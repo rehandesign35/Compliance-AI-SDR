@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 export async function generateOutreachCopy(lead: {
   id?: string;
   name?: string;
