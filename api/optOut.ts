@@ -1,10 +1,54 @@
-import { addToSuppressionList } from "../compliance/suppressionCheck";
+import "dotenv/config";
+import { addToSuppressionList, normalizeComparisonValue } from "../compliance/suppressionCheck";
 import { logComplianceResult } from "./logComplianceResult";
 
 export type OptOutContact = {
   email?: string;
   phone?: string;
 };
+
+async function logOptOutEvent(contact: OptOutContact, processingTimeMs: number): Promise<any> {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error("SUPABASE_URL and SUPABASE_SERVICE_KEY are required for opt-out event insert.");
+  }
+
+  const contactType = contact.email ? "email" : contact.phone ? "phone" : "";
+  const rawContactValue = contact.email ?? contact.phone ?? "";
+
+  if (!contactType || !rawContactValue.trim()) {
+    throw new Error("A valid email or phone value is required for opt-out event insert.");
+  }
+
+  const payload = {
+    contact_value: normalizeComparisonValue(rawContactValue),
+    contact_type: contactType,
+    processing_time_ms: processingTimeMs,
+    requested_at: new Date().toISOString()
+  };
+
+  const response = await fetch(`${supabaseUrl.replace(/\/$/, "")}/rest/v1/opt_out_events`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: supabaseServiceKey,
+      Authorization: `Bearer ${supabaseServiceKey}`,
+      Prefer: "return=representation"
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Supabase opt_out_events insert failed (${response.status} ${response.statusText}): ${errorText || "No error details returned"}`
+    );
+  }
+
+  return response.json();
+}
 
 export async function handleOptOutRequest(contact: OptOutContact): Promise<{
   success: true;
@@ -15,6 +59,9 @@ export async function handleOptOutRequest(contact: OptOutContact): Promise<{
   const startedAt = Date.now();
 
   await addToSuppressionList(contact);
+
+  const processingTimeBeforeEventLog = Date.now() - startedAt;
+  await logOptOutEvent(contact, processingTimeBeforeEventLog);
 
   await logComplianceResult(
     {
@@ -28,9 +75,7 @@ export async function handleOptOutRequest(contact: OptOutContact): Promise<{
       phone: contact.phone,
       channel: contact.email ? "email" : contact.phone ? "sms" : undefined
     }
-  ).catch((error) => {
-    console.warn(`Opt-out audit log write failed: ${(error as Error).message}`);
-  });
+  );
 
   const processedAt = new Date().toISOString();
   const processingTimeMs = Date.now() - startedAt;
