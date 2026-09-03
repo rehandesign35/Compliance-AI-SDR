@@ -44,14 +44,14 @@ Six leads were run through the compliance engine, covering: a suppressed contact
 
 | Lead | Case Type | Expected | Actual | Reason | Match |
 |---|---|---|---|---|---|
-| `[FILL IN]` | Suppressed | Blocked | `[FILL IN]` | `[FILL IN]` | `[FILL IN]` |
-| `[FILL IN]` | Outside contact window | Blocked | `[FILL IN]` | `[FILL IN]` | `[FILL IN]` |
-| `[FILL IN]` | Over frequency cap | Blocked | `[FILL IN]` | `[FILL IN]` | `[FILL IN]` |
-| `[FILL IN]` | Clean (email) | Allowed | `[FILL IN]` | `[FILL IN]` | `[FILL IN]` |
-| `[FILL IN]` | Clean (SMS, in-window) | Allowed | `[FILL IN]` | `[FILL IN]` | `[FILL IN]` |
-| `[FILL IN]` | Suppressed, differently formatted | Blocked | `[FILL IN]` | `[FILL IN]` | `[FILL IN]` |
+| Ava Suppressed | Suppressed | Blocked | Blocked | Contact is on suppression list | Yes |
+| Ben Offhours | Outside contact window | Blocked | Blocked | Outside allowed contact window (local time: 6:00 AM) | Yes |
+| Cara Frequent | Over frequency cap | Blocked | Blocked | Frequency cap exceeded: 4 contacts in last 30 days | Yes |
+| Dylan Clean | Clean (email) | Allowed | Allowed | All compliance checks passed | Yes |
+| Emma Valid SMS | Clean (SMS, in-window) | Allowed | Allowed | All compliance checks passed | Yes |
+| Frank Edge | Suppressed, differently formatted | Blocked | Blocked | Contact is on suppression list | Yes |
 
-**Result: `[X]/6` compliance cases verified correct.** Full detail in [`docs/eval-results.md`](./docs/eval-results.md).
+**Result: `6/6` compliance cases verified correct.** Full detail in [`docs/eval-results.md`](./docs/eval-results.md).
 
 ### Opt-out proof
 
