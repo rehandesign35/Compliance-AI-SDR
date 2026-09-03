@@ -16,7 +16,7 @@ type SuppressionRow = {
 
 type OptOutRow = {
   processing_time_ms?: number;
-  created_at?: string;
+  requested_at?: string;
 };
 
 function buildErrorResponse(res: any, statusCode: number, message: string) {
@@ -93,7 +93,7 @@ export default async function handler(req: any, res: any) {
     const [auditRows, suppressionRows, optOutRows] = await Promise.all([
       fetchSupabase<AuditRow[]>("/rest/v1/audit_log?select=lead_name,channel,allowed,reason,checked_at&order=checked_at.desc&limit=50"),
       fetchSupabase<SuppressionRow[]>("/rest/v1/suppression_list?select=contact_value,contact_type,added_at"),
-      fetchSupabase<OptOutRow[]>("/rest/v1/opt_out_events?select=processing_time_ms,created_at")
+      fetchSupabase<OptOutRow[]>("/rest/v1/opt_out_events?select=processing_time_ms,requested_at")
     ]);
 
     const totalSuppressionEntries = suppressionRows.length;
