@@ -57,9 +57,9 @@ Six leads were run through the compliance engine, covering: a suppressed contact
 
 A visitor can opt out their own contact info and immediately see a subsequent contact attempt against that same info get blocked.
 
-- Contact opted out: `[FILL IN — e.g. "test email, self-submitted"]`
-- Opt-out processing time: `[FILL IN] ms`
-- Re-check against the same contact immediately after: **blocked**, reason: `[FILL IN]`
+- Contact opted out: `you@example.com` (self-submitted test email)
+- Opt-out processing time: `1056 ms`
+- Re-check against the same contact immediately after: **blocked**, reason: `Contact is on suppression list`
 
 This proves the suppression list is live and enforced in real time, not a static file checked once at build time.
 
@@ -67,10 +67,10 @@ This proves the suppression list is live and enforced in real time, not a static
 
 The deliverability monitor was tested by deliberately pushing a channel's simulated bounce rate past its threshold.
 
-- Channel tested: `[FILL IN]`
-- Simulated sends: `[FILL IN]`, bounces: `[FILL IN]`
-- Computed bounce rate: `[FILL IN]%` (threshold: 5%)
-- Result: sending paused — `[FILL IN — confirm actual log message]`
+- Channel tested: `email`
+- Simulated sends: `5`, bounces: `1`
+- Computed bounce rate: `20%` (threshold: 5%)
+- Result: sending paused — `Bounce rate 20.00% exceeds threshold 5%`
 
 **Threshold note:** the complaint-rate threshold used in this demo is set at a demo-appropriate percentage rather than a production-realistic one (~0.1%, typical for real ESPs). At mock-dataset volume (single-digit sends), a production threshold would trigger on a single complaint regardless, making it untestable in any meaningful way. The threshold is config-driven (`DELIVERABILITY_CONFIG` in `/compliance/deliverabilityMonitor.ts`) specifically so it can be tuned to realistic values once real send volume exists.
 
@@ -85,7 +85,7 @@ The deliverability monitor was tested by deliberately pushing a channel's simula
 
 - No real outreach was sent to real people. Suppression, contact-window, and frequency-cap logic is proven against a mock dataset and self-directed opt-out testing — not live third-party sends. This was a deliberate constraint, not a shortcut: sending real unsolicited outreach to prove an anti-spam tool works would be the exact problem the project exists to prevent.
 - The complaint-rate threshold is set at a demo-scale value, not a production-realistic one, for the reason explained above. It is config-driven and intended to be tightened once real send volume justifies it.
-- Deliverability stats shown on the dashboard are `[FILL IN — state whether persisted to Supabase via a snapshot table, or shown as a static result from a manual eval run, per whichever option was chosen in Step 8]`.
+- Deliverability stats shown on the dashboard are a static result from a manual eval run; deliverability events are not persisted to a Supabase snapshot table.
 
 ## How this connects to the rest of the portfolio
 
@@ -95,8 +95,8 @@ Sam proved compliance could be built into one channel. This is what it looks lik
 
 ## Live links
 
-- Dashboard: `[FILL IN]`
-- GitHub repo: `[FILL IN]`
+- Dashboard: [compliance-ai-sdr.vercel.app/dashboard/index.html](https://compliance-ai-sdr.vercel.app/dashboard/index.html)
+- GitHub repo: [github.com/rehandesign35/Compliance-AI-SDR](https://github.com/rehandesign35/Compliance-AI-SDR)
 
 ## Repo structure
 
